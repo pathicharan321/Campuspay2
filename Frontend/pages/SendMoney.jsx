@@ -4,10 +4,16 @@ import { useState } from 'react';
 import config from '../config';
 import { Toaster, toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+
 export const SendMoney = () => {
     const { id, name } = useParams();
     const [amount, setAmount] = useState(0);
     const navigate = useNavigate();
+    const handlePaymentSuccess = (receiver,amount) => {
+        navigate('/payment-success', {
+            state: {receiver,amount }
+        });
+    };
     const sendmoney=async()=>{
         try{
             const response=await axios.post(`${config.API_URL}/user/transfer`,{
@@ -20,7 +26,7 @@ export const SendMoney = () => {
             })
             if(response.status===200){
                 toast.success(response.data.message);
-                navigate('/dashboard');
+                handlePaymentSuccess(name,amount);  
             }
         }
         catch(err){
